@@ -1,4 +1,4 @@
-package me.pgb.a2021_04_02_radioservice.models;
+package me.pgb.JStachuraForeGroundRadio.models;
 
 public class RadioStation {
 

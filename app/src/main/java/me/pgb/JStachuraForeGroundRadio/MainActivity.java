@@ -1,6 +1,6 @@
-package me.pgb.a2021_04_02_radioservice;
+package me.pgb.JStachuraForeGroundRadio;
 
-import android.app.Notification;
+import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -8,23 +8,28 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import me.pgb.a2021_04_02_radioservice.service.RadioService;
-import me.pgb.a2021_04_02_radioservice.service.ServiceContainer;
-import me.pgb.a2021_04_02_radioservice.ui.background_radio.RadioViewModel;
+import me.pgb.JStachuraForeGroundRadio.service.RadioService;
+import me.pgb.JStachuraForeGroundRadio.service.ServiceContainer;
+import static android.Manifest.permission.RECORD_AUDIO;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Intent notificationIntent;
     private boolean mBound = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +80,19 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+        navView.setOnNavigationItemReselectedListener(new BottomNavigationView.OnNavigationItemReselectedListener() {
+            @Override
+            public void onNavigationItemReselected(@NonNull MenuItem item) {
+                //do nothing -- fixes issue with visualizer improperly reloading
+            }
+        });
+        String[] perms = {RECORD_AUDIO};
+        ActivityCompat.requestPermissions(this, perms, 200);
+        int saidYes = ContextCompat.checkSelfPermission(this.getApplicationContext(), RECORD_AUDIO);
+        if (!(saidYes == PackageManager.PERMISSION_GRANTED)){
+            this.finishAffinity();
+        }
+
     }
 
 

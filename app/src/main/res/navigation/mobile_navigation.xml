@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="me.pgb.a2021_04_02_radioservice.ui.home.HomeFragment"
+        android:name="me.pgb.JStachuraForeGroundRadio.ui.home.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="me.pgb.a2021_04_02_radioservice.ui.dashboard.DashboardFragment"
+        android:name="me.pgb.JStachuraForeGroundRadio.ui.dashboard.VisualizerFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="me.pgb.a2021_04_02_radioservice.ui.background_radio.RadioFragment"
+        android:name="me.pgb.JStachuraForeGroundRadio.ui.background_radio.RadioFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_radio" />
 </navigation>

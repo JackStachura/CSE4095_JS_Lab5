@@ -1,16 +1,16 @@
-package me.pgb.a2021_04_02_radioservice.ui.background_radio;
+package me.pgb.JStachuraForeGroundRadio.ui.home;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class RadioViewModel extends ViewModel {
+public class HomeViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
 
-    public RadioViewModel() {
+    public HomeViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is notifications fragment");
+        mText.setValue("Welcome to the Radio App! Head to Configuration to control the radio, and Visualizer to see the playing audio visualized!");
     }
 
     public LiveData<String> getText() {

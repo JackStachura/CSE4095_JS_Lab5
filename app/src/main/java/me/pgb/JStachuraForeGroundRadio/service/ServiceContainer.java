@@ -1,4 +1,4 @@
-package me.pgb.a2021_04_02_radioservice.service;
+package me.pgb.JStachuraForeGroundRadio.service;
 
 public class ServiceContainer {
     public static RadioService radioService ;

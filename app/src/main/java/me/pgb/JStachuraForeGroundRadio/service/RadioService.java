@@ -1,8 +1,7 @@
-package me.pgb.a2021_04_02_radioservice.service;
+package me.pgb.JStachuraForeGroundRadio.service;
 
 import android.app.Service;
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -12,13 +11,19 @@ import android.os.Message;
 import android.os.Process;
 import android.util.Log;
 
-import me.pgb.a2021_04_02_radioservice.controllers.MediaPlayerHandler;
+import me.pgb.JStachuraForeGroundRadio.controllers.MediaPlayerHandler;
+import me.pgb.JStachuraForeGroundRadio.ui.background_radio.RadioFragment;
+import me.pgb.JStachuraForeGroundRadio.ui.dashboard.VisualizerFragment;
+
+import static java.lang.Integer.parseInt;
 
 public class RadioService extends Service {
 
     private MediaPlayerHandler mediaPlayerHandler;
     private String URL = "http://stream.whus.org:8000/whusfm";
-
+    private int volume;
+    private int progress = 100;
+    public static boolean isChanging;
     private final String TAG = "_SERVICE";
     private final IBinder binder = new LocalBinder();
     private int counter = 0;
@@ -51,22 +56,30 @@ public class RadioService extends Service {
             Object someObject = msg.obj;
 
             Log.i(TAG,"msg from Handler: " + someObject.toString());
-            Integer integer = Integer.getInteger(someObject.toString(),0);
-            if (integer.intValue() >= 200) {
+            String command = someObject.toString();
+            if (command.equals("OFF")) {
                 keepRunning = false;
                 mediaPlayerHandler.pauseMediaPlayer();
-                mediaPlayerHandler.shutdownMediaPlayer();
+
+                runningInBackground = false;
                 try {
                     backgroundThread.join();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            } else {
+            } else if (command.equals("ON")){
+                Log.i(TAG, "running in background: " + String.valueOf(runningInBackground));
                 if (!runningInBackground) {
+                    Log.i(TAG, "Got here, keep running =" + String.valueOf(keepRunning));
                     runningInBackground = true;
+                    keepRunning = true;
                     backgroundThread = new Thread("Background Thread in Foreground") {
                         @Override
                         public void run() {
+                            Log.i(TAG, "Got here to shutdownsetup");
+                            mediaPlayerHandler.shutdownMediaPlayer();
+                            mediaPlayerHandler.setupMediaPlayer(URL);
+                            mediaPlayerHandler.setMediaVolume(progress);
                             mediaPlayerHandler.asyncLaunchMediaPlayer();
                             while (keepRunning) {
 
@@ -90,6 +103,30 @@ public class RadioService extends Service {
                         backgroundThread.start();
                     }
                 }
+            }
+
+            else // command is a radio station url, or a number for the volume change. \
+            {
+
+
+                try{
+                    int v_progress = Integer.parseInt(command);
+                    mediaPlayerHandler.setMediaVolume(v_progress);
+                }
+                catch (NumberFormatException e){
+                    URL = command;
+                    if(mediaPlayerHandler.isPlaying()) {
+                        isChanging = true;
+                        radioOff();
+
+                        radioOn();
+                        isChanging = false;
+                        RadioFragment.statusView.setText("");
+                    }
+                }
+
+
+
             }
 
             //counter++;
@@ -156,7 +193,49 @@ public class RadioService extends Service {
         return counter;
     }
 
-    public void stopForegroundCounter() { /** method for clients */
-        keepRunning = false;
+
+    public void radioOn(){
+        Message msg = myHandler.obtainMessage();
+        msg.arg1 = 1;
+        msg.obj = "ON";
+        myHandler.sendMessage(msg);
+        VisualizerFragment.session_id = mediaPlayerHandler.getAudioSessionId();
+
     }
+    public void radioOff(){
+        VisualizerFragment.audio_set = false;
+        Message msg = myHandler.obtainMessage();
+        msg.arg1 = 1;
+        msg.obj = "OFF";
+        myHandler.sendMessage(msg);
+    }
+    public boolean isPlaying(){
+        return mediaPlayerHandler.isPlaying();
+    }
+
+    public String getURL() { return URL; }
+
+    public void changeURL(String url){
+        if (!url.equals(URL)) {
+            Message msg = myHandler.obtainMessage();
+            msg.arg1 = 1;
+            msg.obj = url;
+            myHandler.sendMessage(msg);
+        }
+        RadioFragment.statusView.setText("");
+    }
+
+    public void setVolume(int prog){
+        progress = prog;
+        Message msg = myHandler.obtainMessage();
+        msg.arg1 = 1;
+        msg.obj = String.valueOf(progress);
+        myHandler.sendMessage(msg);
+    }
+
+    public int getProgress(){ return progress;}
+    public boolean isChanging(){ return isChanging;}
+    public int getAudioSessionId(){ return mediaPlayerHandler.getAudioSessionId();}
+
+
 }

@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">a2021_04_02_radioService</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_dashboard">Visualizer</string>
+    <string name="title_notifications">Configuration</string>
 
     <string name="channel_name">Channel N</string>
     <string name="channel_description">Notification Channel N</string>

@@ -1,4 +1,4 @@
-package me.pgb.a2021_04_02_radioservice.controllers;
+package me.pgb.JStachuraForeGroundRadio.controllers;
 
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
@@ -87,6 +87,16 @@ public class MediaPlayerHandler {
             mediaPlayer.release();
         }
         mediaPlayer = null;
+    }
+
+    public void setMediaVolume(int prog){
+        Log.i("VOLUME", " " + String.valueOf(prog));
+        float log1=(float)( 1 - (Math.log(100- prog)/Math.log(100)));
+        mediaPlayer.setVolume(log1, log1);
+    }
+    public int getAudioSessionId(){
+        //Returns the audio session ID of the mediaPlayer.
+        return mediaPlayer.getAudioSessionId();
     }
 }
 
