@@ -88,10 +88,7 @@ public class MainActivity extends AppCompatActivity {
         });
         String[] perms = {RECORD_AUDIO};
         ActivityCompat.requestPermissions(this, perms, 200);
-        int saidYes = ContextCompat.checkSelfPermission(this.getApplicationContext(), RECORD_AUDIO);
-        if (!(saidYes == PackageManager.PERMISSION_GRANTED)){
-            this.finishAffinity();
-        }
+
 
     }
 
